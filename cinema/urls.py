@@ -23,7 +23,7 @@ urlpatterns = [
 app_name = "cinema"
 
 router = DefaultRouter()
-router.register("cinema-halls", CinemaHallViewSet, basename="cinema-hall")
+router.register("cinema_halls", CinemaHallViewSet, basename="cinema-hall")
 router.register("movies", MovieViewSet, basename="movie")
 
 urlpatterns += router.urls

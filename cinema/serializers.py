@@ -7,6 +7,16 @@ class MovieSerializer(serializers.ModelSerializer):
     class Meta:
         model = Movie
         fields = "__all__"
+        extra_kwargs = {
+            "actors": {
+                "required": False,
+                "allow_empty": True,
+            },
+            "genres": {
+                "required": False,
+                "allow_empty": True,
+            },
+        }
 
     def update(self, instance, validated_data):
         instance.title = validated_data.get("title", instance.title)

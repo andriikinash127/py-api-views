@@ -1,5 +1,5 @@
 from django.shortcuts import get_object_or_404
-from rest_framework import status
+from rest_framework import status, mixins
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.generics import GenericAPIView
@@ -72,74 +72,37 @@ class GenreDetail(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class ActorList(GenericAPIView):
+class ActorList(mixins.ListModelMixin, mixins.CreateModelMixin, GenericAPIView):
     queryset = Actor.objects.all()
     serializer_class = ActorSerializer
 
     def get(self, request):
-        actors = self.get_queryset()
-        serializer = self.get_serializer(actors, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return self.list(request)
 
     def post(self, request):
-        serializer = self.get_serializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(
-                serializer.data,
-                status=status.HTTP_201_CREATED,
-            )
-        return Response(
-            serializer.errors,
-            status=status.HTTP_400_BAD_REQUEST,
-        )
+        return self.create(request)
 
 
-class ActorDetail(GenericAPIView):
+class ActorDetail(
+    mixins.RetrieveModelMixin,
+    mixins.UpdateModelMixin,
+    mixins.DestroyModelMixin,
+    GenericAPIView,
+):
     queryset = Actor.objects.all()
     serializer_class = ActorSerializer
 
     def get(self, request, pk):
-        actor = get_object_or_404(self.get_queryset(), pk=pk)
-        serializer = self.get_serializer(actor)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return self.retrieve(request, pk=pk)
 
     def put(self, request, pk):
-        actor = get_object_or_404(self.get_queryset(), pk=pk)
-        serializer = self.get_serializer(actor, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(
-                serializer.data,
-                status=status.HTTP_200_OK,
-            )
-        return Response(
-            serializer.errors,
-            status=status.HTTP_400_BAD_REQUEST,
-        )
+        return self.update(request, pk=pk)
 
     def patch(self, request, pk):
-        actor = get_object_or_404(self.get_queryset(), pk=pk)
-        serializer = self.get_serializer(
-            actor,
-            data=request.data,
-            partial=True,
-        )
-        if serializer.is_valid():
-            serializer.save()
-            return Response(
-                serializer.data,
-                status=status.HTTP_200_OK,
-            )
-        return Response(
-            serializer.errors,
-            status=status.HTTP_400_BAD_REQUEST,
-        )
+        return self.partial_update(request, pk=pk)
 
     def delete(self, request, pk):
-        actor = get_object_or_404(self.get_queryset(), pk=pk)
-        actor.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return self.destroy(request, pk=pk)
 
 
 class CinemaHallViewSet(GenericViewSet):
