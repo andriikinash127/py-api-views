@@ -84,7 +84,17 @@ class ActorList(
         return self.list(request)
 
     def post(self, request):
-        return self.create(request)
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(
+                serializer.data,
+                status=status.HTTP_201_CREATED,
+            )
+        return Response(
+            serializer.errors,
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
 
 class ActorDetail(
@@ -100,10 +110,36 @@ class ActorDetail(
         return self.retrieve(request, pk=pk)
 
     def put(self, request, pk):
-        return self.update(request, pk=pk)
+        actor = get_object_or_404(Actor, pk=pk)
+        serializer = self.get_serializer(actor, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(
+                serializer.data,
+                status=status.HTTP_200_OK,
+            )
+        return Response(
+            serializer.errors,
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
     def patch(self, request, pk):
-        return self.partial_update(request, pk=pk)
+        actor = get_object_or_404(Actor, pk=pk)
+        serializer = self.get_serializer(
+            actor,
+            data=request.data,
+            partial=True,
+        )
+        if serializer.is_valid():
+            serializer.save()
+            return Response(
+                serializer.data,
+                status=status.HTTP_200_OK,
+            )
+        return Response(
+            serializer.errors,
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
     def delete(self, request, pk):
         return self.destroy(request, pk=pk)
