@@ -13,17 +13,41 @@ from rest_framework.routers import DefaultRouter
 
 
 urlpatterns = [
-    path("genres/", GenreList.as_view(), name="genre-list"),
-    path("genres/<int:pk>/", GenreDetail.as_view(), name="genre-detail"),
-    path("actors/", ActorList.as_view(), name="actor-list"),
-    path("actors/<int:pk>/", ActorDetail.as_view(), name="actor-detail"),
+    path(
+        "api/cinema/genres/",
+        GenreList.as_view(),
+        name="genre-list"
+    ),
+    path(
+        "api/cinema/genres/<int:pk>/",
+        GenreDetail.as_view(),
+        name="genre-detail"
+    ),
+    path(
+        "api/cinema/actors/",
+        ActorList.as_view(),
+        name="actor-list"
+    ),
+    path(
+        "api/cinema/actors/<int:pk>/",
+        ActorDetail.as_view(),
+        name="actor-detail"
+    ),
 ]
 
 
 app_name = "cinema"
 
 router = DefaultRouter()
-router.register("cinema_halls", CinemaHallViewSet, basename="cinema-hall")
-router.register("movies", MovieViewSet, basename="movie")
+router.register(
+    "api/cinema/cinema_halls",
+    CinemaHallViewSet,
+    basename="cinema-hall"
+)
+router.register(
+    "api/cinema/movies",
+    MovieViewSet,
+    basename="movie"
+)
 
 urlpatterns += router.urls
